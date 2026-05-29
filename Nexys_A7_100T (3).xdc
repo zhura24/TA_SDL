@@ -1,0 +1,56 @@
+## ============================================================
+## Constraint File untuk Nexys A7-100T
+## Sistem Penyiram Tanaman Otomatis - 6 State FSM
+##
+## RGB LED per State:
+##   S_IDLE     (000) → LED OFF
+##   S_CHECK    (001) → KUNING  (LED16_R + LED16_G)
+##   S_WATER    (010) → BIRU    (LED16_B) + Pompa ON
+##   S_RAIN     (011) → HIJAU   (LED16_G)
+##   S_DRY_WAIT (100) → MERAH   (LED16_R)
+##   S_DONE     (101) → MAGENTA (LED16_R + LED16_B)
+## ============================================================
+
+## --- Clock 100 MHz ---
+set_property -dict { PACKAGE_PIN E3    IOSTANDARD LVCMOS33 } [get_ports clk];
+create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk];
+
+## --- Switches (Input) ---
+set_property -dict { PACKAGE_PIN J15   IOSTANDARD LVCMOS33 } [get_ports reset];           # SW0: Reset
+set_property -dict { PACKAGE_PIN L16   IOSTANDARD LVCMOS33 } [get_ports enable];          # SW1: Enable
+set_property -dict { PACKAGE_PIN M13   IOSTANDARD LVCMOS33 } [get_ports sensor_kering];   # SW2: Sensor Kelembapan
+set_property -dict { PACKAGE_PIN R15   IOSTANDARD LVCMOS33 } [get_ports sensor_hujan];    # SW3: Sensor Hujan
+
+## --- RGB LED (Output) ---
+## LED16 pada Nexys A7 (RGB LED pertama)
+set_property -dict { PACKAGE_PIN N16   IOSTANDARD LVCMOS33 } [get_ports led_r];  # LED16_R - Merah
+set_property -dict { PACKAGE_PIN R11   IOSTANDARD LVCMOS33 } [get_ports led_g];  # LED16_G - Hijau
+set_property -dict { PACKAGE_PIN G14   IOSTANDARD LVCMOS33 } [get_ports led_b];  # LED16_B - Biru
+
+## --- 7-Segment Display Cathodes (seg) ---
+## seg[0]=a, seg[1]=b, seg[2]=c, seg[3]=d, seg[4]=e, seg[5]=f, seg[6]=g
+set_property -dict { PACKAGE_PIN T10   IOSTANDARD LVCMOS33 } [get_ports {seg[0]}];  # CA (segment a)
+set_property -dict { PACKAGE_PIN R10   IOSTANDARD LVCMOS33 } [get_ports {seg[1]}];  # CB (segment b)
+set_property -dict { PACKAGE_PIN K16   IOSTANDARD LVCMOS33 } [get_ports {seg[2]}];  # CC (segment c)
+set_property -dict { PACKAGE_PIN K13   IOSTANDARD LVCMOS33 } [get_ports {seg[3]}];  # CD (segment d)
+set_property -dict { PACKAGE_PIN P15   IOSTANDARD LVCMOS33 } [get_ports {seg[4]}];  # CE (segment e)
+set_property -dict { PACKAGE_PIN T11   IOSTANDARD LVCMOS33 } [get_ports {seg[5]}];  # CF (segment f)
+set_property -dict { PACKAGE_PIN L18   IOSTANDARD LVCMOS33 } [get_ports {seg[6]}];  # CG (segment g)
+
+## --- 7-Segment Decimal Point ---
+set_property -dict { PACKAGE_PIN H15   IOSTANDARD LVCMOS33 } [get_ports dp];
+
+## --- 7-Segment Display Anodes ---
+set_property -dict { PACKAGE_PIN J17   IOSTANDARD LVCMOS33 } [get_ports {an[0]}];   # AN0 (digit paling kanan)
+set_property -dict { PACKAGE_PIN J18   IOSTANDARD LVCMOS33 } [get_ports {an[1]}];   # AN1
+set_property -dict { PACKAGE_PIN T9    IOSTANDARD LVCMOS33 } [get_ports {an[2]}];   # AN2
+set_property -dict { PACKAGE_PIN J14   IOSTANDARD LVCMOS33 } [get_ports {an[3]}];   # AN3
+set_property -dict { PACKAGE_PIN P14   IOSTANDARD LVCMOS33 } [get_ports {an[4]}];   # AN4
+set_property -dict { PACKAGE_PIN T14   IOSTANDARD LVCMOS33 } [get_ports {an[5]}];   # AN5
+set_property -dict { PACKAGE_PIN K2    IOSTANDARD LVCMOS33 } [get_ports {an[6]}];   # AN6
+set_property -dict { PACKAGE_PIN U13   IOSTANDARD LVCMOS33 } [get_ports {an[7]}];   # AN7
+
+## --- Konfigurasi Bitstream ---
+set_property CONFIG_VOLTAGE 3.3 [current_design]
+set_property CFGBVS VCCO [current_design]
+set_property BITSTREAM.CONFIG.UNUSEDPIN PULLDOWN [current_design]
